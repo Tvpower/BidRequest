@@ -1,0 +1,107 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1 class="hero-title">Connect with the right service providers</h1>
+          <p class="hero-subtitle">Post your request and receive competitive bids from qualified professionals</p>
+          <div class="hero-buttons">
+            <a routerLink="/requests/create" class="btn btn-primary btn-lg me-2">Post a Request</a>
+            <a routerLink="/requests" class="btn btn-outline-primary btn-lg">Browse Requests</a>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <img src="assets/images/hero-image.svg" alt="BidRequest Platform" class="img-fluid hero-image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="container">
+      <h2 class="section-title text-center">How It Works</h2>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Post a Request</h3>
+            <p>Describe what you need and set your budget and timeline requirements.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Receive Bids</h3>
+            <p>Get competitive bids from qualified service providers and professionals.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Choose the Best</h3>
+            <p>Review bids, compare proposals, and select the best provider for your needs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Requests Section -->
+  <section class="latest-requests-section">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title">Latest Requests</h2>
+        <a routerLink="/requests" class="btn btn-outline-primary">View All</a>
+      </div>
+
+      <div *ngIf="isLoading" class="text-center py-5">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="!isLoading && !errorMessage" class="row">
+        <div *ngFor="let request of latestRequests" class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <span class="badge bg-primary mb-2">{{ request.category_name }}</span>
+              <h5 class="card-title">{{ request.title }}</h5>
+              <p class="card-text">{{ request.description | slice:0:100 }}{{ request.description.length > 100 ? '...' : '' }}</p>
+            </div>
+            <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+              <small class="text-muted">Posted by {{ request.requester_name }}</small>
+              <a [routerLink]="['/requests', request.request_id]" class="btn btn-sm btn-outline-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && !errorMessage && latestRequests.length === 0" class="text-center py-4">
+        <p>No requests available at the moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories-section">
+    <div class="container">
+      <h2 class="section-title text-center">Browse by Category</h2>
+      <div class="row mt-4">
+        <div *ngFor="let category of categories" class="col-md-3 col-sm-6 mb-4">
+          <a [routerLink]="['/requests']" [queryParams]="{category_id: category.category_id}" class="category-card">
+            <div class="card text-center h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ category.name }}</h5>
+                <p class="card-text" *ngIf="category.description">{{ category.description }}</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

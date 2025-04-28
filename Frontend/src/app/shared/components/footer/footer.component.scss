@@ -1,0 +1,33 @@
+.footer {
+  margin-top: 2rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.footer h5 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #343a40;
+}
+
+.footer a {
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: #007bff;
+    text-decoration: none;
+  }
+}
+
+.footer ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer .text-muted {
+  color: #6c757d;
+}
+
+hr {
+  margin: 1.5rem 0;
+}

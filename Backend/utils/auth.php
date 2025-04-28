@@ -1,5 +1,5 @@
-// utils/auth.php
 <?php
+// utils/auth.php
 class Auth {
   public static function authorize() {
     $headers = getallheaders();

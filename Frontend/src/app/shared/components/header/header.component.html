@@ -1,0 +1,58 @@
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <span class="brand-text">BidRequest</span>
+    </a>
+    
+    <button class="navbar-toggler" type="button" (click)="toggleMenu()" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" [ngClass]="{'show': isMenuOpen}">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/requests" routerLinkActive="active">Browse Requests</a>
+        </li>
+      </ul>
+      
+      <ul class="navbar-nav">
+        <ng-container *ngIf="!currentUser">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/auth/login" routerLinkActive="active">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/auth/register" routerLinkActive="active">Register</a>
+          </li>
+        </ng-container>
+        
+        <ng-container *ngIf="currentUser">
+          <!-- Buyer-specific menu items -->
+          <li class="nav-item" *ngIf="currentUser.user_type === 'buyer'">
+            <a class="nav-link" routerLink="/requests/create" routerLinkActive="active">Create Request</a>
+          </li>
+          
+          <!-- Seller-specific menu items -->
+          <li class="nav-item" *ngIf="currentUser.user_type === 'seller'">
+            <a class="nav-link" routerLink="/bids/my-bids" routerLinkActive="active">My Bids</a>
+          </li>
+          
+          <!-- Common authenticated user menu items -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ currentUser.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" routerLink="/user-profile">My Profile</a></li>
+              <li><a class="dropdown-item" routerLink="/requests/my-requests" *ngIf="currentUser.user_type === 'buyer'">My Requests</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault()">Logout</a></li>
+            </ul>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</header>

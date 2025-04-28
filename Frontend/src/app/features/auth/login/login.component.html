@@ -1,0 +1,61 @@
+<div class="auth-container">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="auth-card">
+          <h2 class="text-center mb-4">Log In</h2>
+          
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+          
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                formControlName="email"
+                [ngClass]="{'is-invalid': f['email'].touched && f['email'].errors}"
+              >
+              <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
+                <div *ngIf="f['email'].errors['required']">Email is required</div>
+                <div *ngIf="f['email'].errors['email']">Please enter a valid email address</div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                formControlName="password"
+                [ngClass]="{'is-invalid': f['password'].touched && f['password'].errors}"
+              >
+              <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
+                <div *ngIf="f['password'].errors['required']">Password is required</div>
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg" 
+                [disabled]="loginForm.invalid || isSubmitting"
+              >
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Log In
+              </button>
+            </div>
+          </form>
+          
+          <div class="text-center mt-4">
+            <p>Don't have an account? <a routerLink="/auth/register">Register</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

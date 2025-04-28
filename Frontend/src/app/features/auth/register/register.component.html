@@ -1,0 +1,142 @@
+<div class="auth-container">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="auth-card">
+          <h2 class="text-center mb-4">Create an Account</h2>
+          
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+          
+          <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+          </div>
+          
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="username" 
+                formControlName="username"
+                [ngClass]="{'is-invalid': f['username'].touched && f['username'].errors}"
+              >
+              <div *ngIf="f['username'].touched && f['username'].errors" class="invalid-feedback">
+                <div *ngIf="f['username'].errors['required']">Username is required</div>
+                <div *ngIf="f['username'].errors['minlength']">Username must be at least 3 characters</div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                formControlName="email"
+                [ngClass]="{'is-invalid': f['email'].touched && f['email'].errors}"
+              >
+              <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
+                <div *ngIf="f['email'].errors['required']">Email is required</div>
+                <div *ngIf="f['email'].errors['email']">Please enter a valid email address</div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                formControlName="password"
+                [ngClass]="{'is-invalid': f['password'].touched && f['password'].errors}"
+              >
+              <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
+                <div *ngIf="f['password'].errors['required']">Password is required</div>
+                <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Account Type</label>
+              <div class="d-flex">
+                <div class="form-check me-4">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    id="buyer" 
+                    value="buyer" 
+                    formControlName="user_type"
+                  >
+                  <label class="form-check-label" for="buyer">
+                    Buyer (Post Requests)
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    id="seller" 
+                    value="seller" 
+                    formControlName="user_type"
+                  >
+                  <label class="form-check-label" for="seller">
+                    Seller (Submit Bids)
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Seller-specific fields -->
+            <div *ngIf="registerForm.get('user_type')?.value === 'seller'" class="seller-fields">
+              <div class="mb-3">
+                <label for="company_name" class="form-label">Company Name</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="company_name" 
+                  formControlName="company_name"
+                  [ngClass]="{'is-invalid': f['company_name'].touched && f['company_name'].errors}"
+                >
+                <div *ngIf="f['company_name'].touched && f['company_name'].errors" class="invalid-feedback">
+                  <div *ngIf="f['company_name'].errors['required']">Company name is required for sellers</div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="contact_info" class="form-label">Contact Information</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="contact_info" 
+                  formControlName="contact_info"
+                  [ngClass]="{'is-invalid': f['contact_info'].touched && f['contact_info'].errors}"
+                >
+                <div *ngIf="f['contact_info'].touched && f['contact_info'].errors" class="invalid-feedback">
+                  <div *ngIf="f['contact_info'].errors['required']">Contact information is required for sellers</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg" 
+                [disabled]="registerForm.invalid || isSubmitting"
+              >
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Register
+              </button>
+            </div>
+          </form>
+          
+          <div class="text-center mt-4">
+            <p>Already have an account? <a routerLink="/auth/login">Log In</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

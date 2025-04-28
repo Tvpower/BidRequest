@@ -90,6 +90,6 @@
   <span class="method">GET</span> /api/categories - List all categories
 </div>
 
-<p>For more information, check the <a href="https://github.com/yourusername/bidrequest">GitHub repository</a>.</p>
+<p>For more information, check the <a href="https://github.com/Tvpower/BidRequest">GitHub repository</a>.</p>
 </body>
 </html>

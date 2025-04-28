@@ -11,19 +11,19 @@ class BidsController extends Controller {
       $params = [];
 
       //filter by request
-      if (isset($_GET['request_id']) && !empty($_GET['request_id'])) {
+      if (!empty($_GET['request_id'])) {
         $where .= " AND b.request_id = :request_id";
         $params[':request_id'] = $_GET['request_id'];
       }
 
       //filter by seller
-      if (isset($_GET['seller_id']) && !empty($_GET['seller_id'])) {
+      if (!empty($_GET['seller_id'])) {
         $where .= " AND b.seller_id = :seller_id";
         $params[':seller_id'] = $_GET['seller_id'];
       }
 
       //filter by status
-      if (isset($_GET['status']) && !empty($_GET['status'])) {
+      if (!empty($_GET['status'])) {
         $where .= " AND b.status = :status";
         $params[':status'] = $_GET['status'];
       }
@@ -101,8 +101,7 @@ class BidsController extends Controller {
     $data = $this->getRequestData();
 
     //validate input
-    if (!isset($data->request_id) || !isset($data->price) || !isset($data->description) ||
-      empty($data->request_id) || empty($data->price) || empty($data->description)) {
+    if (empty($data->request_id) || empty($data->price) || empty($data->description)) {
       Response::error('Request ID, price, and description are required', 400);
     }
 
@@ -253,17 +252,17 @@ class BidsController extends Controller {
       $updateFields = [];
       $params = [':bid_id' => $bid_id];
 
-      if (isset($data->price) && !empty($data->price)) {
+      if (!empty($data->price)) {
         $updateFields[] = "price = :price";
         $params[':price'] = $data->price;
       }
 
-      if (isset($data->description) && !empty($data->description)) {
+      if (!empty($data->description)) {
         $updateFields[] = "description = :description";
         $params[':description'] = $data->description;
       }
 
-      if (isset($data->delivery_time) && !empty($data->delivery_time)) {
+      if (!empty($data->delivery_time)) {
         $updateFields[] = "delivery_time = :delivery_time";
         $params[':delivery_time'] = $data->delivery_time;
       }

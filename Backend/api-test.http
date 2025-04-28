@@ -1,0 +1,46 @@
+### Register a new user
+POST http://localhost:8000/api/auth/register.php
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123",
+  "user_type": "buyer"
+}
+
+### Login
+POST http://localhost:8000/api/auth/login.php
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Save the token as a variable
+@authToken = {{login.response.body.data.token}}
+
+### Get categories
+GET http://localhost:8000/api/categories/
+
+### Create a request (requires auth)
+POST http://localhost:8000/api/requests/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Test Request",
+  "description": "This is a test request",
+  "category_id": 5,
+  "specifications": [
+    {
+      "type": "Budget",
+      "value": "$500-1000"
+    },
+    {
+      "type": "Timeline",
+      "value": "2 weeks"
+    }
+  ]
+}

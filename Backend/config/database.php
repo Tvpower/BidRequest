@@ -23,7 +23,7 @@ class Database{
     $this->port = getenv('DB_PORT');
     $this->db_name = getenv('DB_NAME');
     $this->username = getenv('DB_USER');
-    $this->password = getenv('<PASSWORD>');
+    $this->password = getenv('DB_PASSWORD');
   }
 
   //connect to database

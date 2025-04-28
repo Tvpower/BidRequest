@@ -6,23 +6,22 @@ class RequestsController extends Controller {
 
   public function listRequests() {
     try {
-      // Default query parameters
+      //default query parameters
       $where = "WHERE 1=1";
       $params = [];
 
-      // Filter by category
+      //filter by category
       if (!empty($_GET['category_id'])) {
         $where .= " AND r.category_id = :category_id";
         $params[':category_id'] = $_GET['category_id'];
       }
-
-      // Filter by status
+      //filter by status
       if (!empty($_GET['status'])) {
         $where .= " AND r.status = :status";
         $params[':status'] = $_GET['status'];
       }
 
-      // Filter by user (for "my requests" functionality)
+      //filter by user (for "my requests" functionality)
       if (!empty($_GET['user_id'])) {
         // Check if user is authorized
         if ($this->auth && $this->auth['user_id'] == $_GET['user_id']) {
@@ -33,12 +32,12 @@ class RequestsController extends Controller {
         }
       }
 
-      // Prepare pagination
+      //prepare pagination
       $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
       $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
       $offset = ($page - 1) * $limit;
 
-      // Count total records for pagination
+      //count total records for pagination
       $count_stmt = $this->db->prepare("
                 SELECT COUNT(*) as total FROM requests r
                 $where
@@ -51,7 +50,7 @@ class RequestsController extends Controller {
       $count_stmt->execute();
       $total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-      // Main query
+      //main query
       $stmt = $this->db->prepare("
                 SELECT
                     r.request_id, r.title, r.description, r.creation_date, r.expiration_date, r.status,
@@ -103,8 +102,7 @@ class RequestsController extends Controller {
     $data = $this->getRequestData();
 
     // Validate input
-    if (!isset($data->title) || !isset($data->description) || !isset($data->category_id) ||
-      empty($data->title) || empty($data->description) || empty($data->category_id)) {
+    if (empty($data->title) || empty($data->description) || empty($data->category_id)) {
       Response::error('Title, description, and category are required', 400);
     }
 
@@ -113,7 +111,7 @@ class RequestsController extends Controller {
       $this->db->beginTransaction();
 
       // Set expiration date (default to 14 days from now if not provided)
-      $expiration_date = isset($data->expiration_date) && !empty($data->expiration_date)
+      $expiration_date = !empty($data->expiration_date)
         ? $data->expiration_date
         : date('Y-m-d H:i:s', strtotime('+14 days'));
 
@@ -286,27 +284,27 @@ class RequestsController extends Controller {
       $updateFields = [];
       $params = [':request_id' => $request_id];
 
-      if (isset($data->title) && !empty($data->title)) {
+      if (!empty($data->title)) {
         $updateFields[] = "title = :title";
         $params[':title'] = $data->title;
       }
 
-      if (isset($data->description) && !empty($data->description)) {
+      if (!empty($data->description)) {
         $updateFields[] = "description = :description";
         $params[':description'] = $data->description;
       }
 
-      if (isset($data->category_id) && !empty($data->category_id)) {
+      if (!empty($data->category_id)) {
         $updateFields[] = "category_id = :category_id";
         $params[':category_id'] = $data->category_id;
       }
 
-      if (isset($data->expiration_date) && !empty($data->expiration_date)) {
+      if (!empty($data->expiration_date)) {
         $updateFields[] = "expiration_date = :expiration_date";
         $params[':expiration_date'] = $data->expiration_date;
       }
 
-      if (isset($data->status) && !empty($data->status)) {
+      if (!empty($data->status)) {
         $updateFields[] = "status = :status";
         $params[':status'] = $data->status;
       }
@@ -434,4 +432,4 @@ class RequestsController extends Controller {
     }
   }
 }
-?>
+

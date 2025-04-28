@@ -1,0 +1,47 @@
+# Prevent directory listing
+Options -Indexes
+
+# Handle errors
+ErrorDocument 404 /404.php
+ErrorDocument 403 /403.php
+
+#enable rewrite engine
+RewriteEngine On
+RewriteBase /
+
+# Block access to .env file
+<FilesMatch "^\.env">
+ Order allow, deny
+ Deny from all
+</FilesMatch>
+
+#Block access to .htaccess and other sensitive files
+<FilesMatch "^(\.|composer\.|package)">
+  Order allow, deny
+  Deny from all
+</FilesMatch>
+
+# Protect config dir
+<FilesMatch "^config">
+ Order allow, deny
+ Deny from all
+</FilesMatch>
+
+# API Routing (Simple version)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/([^/]+)/([^/]+)/?$ api/$1/$2.php [L,QSA]
+RewriteRule ^api/([^/]+)/?$ api/$1/index.php [L,QSA]
+
+# Add security headers
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# PHP settings
+php_flag display_errors off
+php_value post_max_size 10M
+php_value upload_max_filesize 8M

@@ -24,6 +24,7 @@ bidrequest-backend/
 ## Let's Set This Up! 🔧
 ### Step 1: Get the Code
 Simply clone or extract the repository into your web server's directory.
+
 ### Step 2: Configure Your Environment
 Create a `.env` file with your database details. It'll look something like this:
 ``` 
@@ -42,6 +43,10 @@ APP_DEBUG=true
 
 ### Step 4: Apache Configuration
 Make sure the `.htaccess` file is in place. No extra steps needed for most setups!
+
+### Run with: 
+php -S localhost:8000
+
 ### Step 5: Test Drive 🏎️
 Navigate to `http://localhost/bidrequest/api/categories/` in your browser. You should see a JSON response with categories.
 ## API Playground 🎮

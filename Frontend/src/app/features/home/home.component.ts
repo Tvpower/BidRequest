@@ -10,10 +10,13 @@ import { Category } from '../../core/models/category.model';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  latestRequests: Request[] = [];
+  latestServiceRequests: Request[] = [];
+  latestProductRequests: Request[] = [];
   categories: Category[] = [];
-  isLoading = true;
-  errorMessage = '';
+  servicesLoading = true;
+  productsLoading = true;
+  servicesErrorMessage = '';
+  productsErrorMessage = '';
 
   constructor(
     private requestService: RequestService,
@@ -21,20 +24,35 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadLatestRequests();
+    this.loadLatestServiceRequests();
+    this.loadLatestProductRequests();
     this.loadCategories();
   }
 
-  private loadLatestRequests(): void {
-    this.requestService.getRequests({ limit: 6 }).subscribe({
+  private loadLatestServiceRequests(): void {
+    this.requestService.getRequests({ limit: 3, type: 'service' }).subscribe({
       next: (response) => {
-        this.latestRequests = response.requests;
-        this.isLoading = false;
+        this.latestServiceRequests = response?.requests || [];
+        this.servicesLoading = false;
       },
       error: (error) => {
-        this.errorMessage = 'Failed to load latest requests. Please try again later.';
-        this.isLoading = false;
-        console.error('Error loading requests:', error);
+        this.servicesErrorMessage = 'Failed to load latest service requests. Please try again later.';
+        this.servicesLoading = false;
+        console.error('Error loading service requests:', error);
+      }
+    });
+  }
+
+  private loadLatestProductRequests(): void {
+    this.requestService.getRequests({ limit: 3, type: 'product' }).subscribe({
+      next: (response) => {
+        this.latestProductRequests = response?.requests || [];
+        this.productsLoading = false;
+      },
+      error: (error) => {
+        this.productsErrorMessage = 'Failed to load latest product requests. Please try again later.';
+        this.productsLoading = false;
+        console.error('Error loading product requests:', error);
       }
     });
   }
@@ -42,7 +60,7 @@ export class HomeComponent implements OnInit {
   private loadCategories(): void {
     this.categoryService.getCategories().subscribe({
       next: (response) => {
-        this.categories = response.categories;
+        this.categories = response?.categories || [];
       },
       error: (error) => {
         console.error('Error loading categories:', error);

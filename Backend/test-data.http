@@ -1,0 +1,327 @@
+### Register Users
+
+### Register a buyer user
+POST http://localhost:8000/api/auth/register.php
+Content-Type: application/json
+
+{
+  "username": "testbuyer",
+  "email": "buyer@example.com",
+  "password": "password123",
+  "user_type": "buyer"
+}
+
+### Register multiple seller users
+POST http://localhost:8000/api/auth/register.php
+Content-Type: application/json
+
+{
+  "username": "seller1",
+  "email": "seller1@example.com",
+  "password": "password123",
+  "user_type": "seller"
+}
+
+### Login as buyer to get token
+POST http://localhost:8000/api/auth/login.php
+Content-Type: application/json
+
+{
+  "email": "buyer@example.com",
+  "password": "password123"
+}
+
+### Save the buyer token as a variable
+@buyerToken = {{login.response.body.data.token}}
+
+### Login as seller to get token
+POST http://localhost:8000/api/auth/login.php
+Content-Type: application/json
+
+{
+  "email": "seller1@example.com",
+  "password": "password123"
+}
+
+### Save the seller token as a variable
+@sellerToken = {{login.response.body.data.token}}
+
+### Get categories (for reference)
+GET http://localhost:8000/api/categories/
+
+### Create seller profile
+POST http://localhost:8000/api/sellers/
+Content-Type: application/json
+Authorization: Bearer {{sellerToken}}
+
+{
+  "company_name": "Test Company 1",
+  "contact_info": "123 Main St, Example City\nPhone: 555-1234\nEmail: contact@testcompany1.com"
+}
+
+### Create buyer requests
+
+### Web Development Request
+POST http://localhost:8000/api/requests/
+Content-Type: application/json
+Authorization: Bearer {{buyerToken}}
+
+{
+  "title": "Modern E-commerce Website Development",
+  "description": "Looking for a developer to create a responsive e-commerce website with product catalog, shopping cart, and payment processing integration.",
+  "category_id": 5,
+  "expiration_date": "{{$isoTimestamp 30 d}}",
+  "specifications": [
+    {
+      "type": "Budget",
+      "value": "$2000-3000"
+    },
+    {
+      "type": "Timeline",
+      "value": "6 weeks"
+    },
+    {
+      "type": "Platform",
+      "value": "WordPress/WooCommerce"
+    }
+  ]
+}
+
+### Mobile App Request
+POST http://localhost:8000/api/requests/
+Content-Type: application/json
+Authorization: Bearer {{buyerToken}}
+
+{
+  "title": "Fitness Tracking Mobile App",
+  "description": "Need a mobile developer to create a fitness tracking app with workout plans, progress tracking, and social features.",
+  "category_id": 6,
+  "expiration_date": "{{$isoTimestamp 45 d}}",
+  "specifications": [
+    {
+      "type": "Budget",
+      "value": "$5000-8000"
+    },
+    {
+      "type": "Timeline",
+      "value": "3 months"
+    },
+    {
+      "type": "Platform",
+      "value": "iOS and Android"
+    },
+    {
+      "type": "Features",
+      "value": "User authentication, activity tracking, workout library, progress charts"
+    }
+  ]
+}
+
+### Logo Design Request
+POST http://localhost:8000/api/requests/
+Content-Type: application/json
+Authorization: Bearer {{buyerToken}}
+
+{
+  "title": "Modern Logo Design for Tech Startup",
+  "description": "We need a professional logo design for our AI-powered data analytics startup. The logo should convey innovation, reliability, and intelligence.",
+  "category_id": 10,
+  "expiration_date": "{{$isoTimestamp 15 d}}",
+  "specifications": [
+    {
+      "type": "Budget",
+      "value": "$300-500"
+    },
+    {
+      "type": "Timeline",
+      "value": "2 weeks"
+    },
+    {
+      "type": "Deliverables",
+      "value": "Vector files, PNG, JPEG, brand guidelines"
+    },
+    {
+      "type": "Style",
+      "value": "Modern, minimalist, tech-oriented"
+    }
+  ]
+}
+
+### Content Writing Request
+POST http://localhost:8000/api/requests/
+Content-Type: application/json
+Authorization: Bearer {{buyerToken}}
+
+{
+  "title": "Technical Blog Articles for SaaS Company",
+  "description": "We need an experienced technical writer to create 5 in-depth blog articles about cloud computing, SaaS solutions, and digital transformation.",
+  "category_id": 11,
+  "expiration_date": "{{$isoTimestamp 20 d}}",
+  "specifications": [
+    {
+      "type": "Budget",
+      "value": "$500-750"
+    },
+    {
+      "type": "Timeline",
+      "value": "1 month"
+    },
+    {
+      "type": "Word Count",
+      "value": "1500-2000 words per article"
+    },
+    {
+      "type": "SEO Requirements",
+      "value": "Keyword optimization, meta descriptions"
+    }
+  ]
+}
+
+### Marketing Consultation Request
+POST http://localhost:8000/api/requests/
+Content-Type: application/json
+Authorization: Bearer {{buyerToken}}
+
+{
+  "title": "Digital Marketing Strategy Consultation",
+  "description": "Seeking a marketing consultant to help develop a comprehensive digital marketing strategy for our small business, including social media, SEO, and content marketing.",
+  "category_id": 14,
+  "expiration_date": "{{$isoTimestamp 25 d}}",
+  "specifications": [
+    {
+      "type": "Budget",
+      "value": "$1000-1500"
+    },
+    {
+      "type": "Timeline",
+      "value": "4 weeks"
+    },
+    {
+      "type": "Deliverables",
+      "value": "Strategy document, implementation plan, KPI recommendations"
+    },
+    {
+      "type": "Experience Required",
+      "value": "5+ years in digital marketing for small businesses"
+    }
+  ]
+}
+
+### Get all the buyer's requests (to obtain request IDs)
+GET http://localhost:8000/api/requests/?user_id=1
+Authorization: Bearer {{buyerToken}}
+
+### Store a request ID for bidding
+@requestId = {{GET_all_requests.response.body.data.requests[0].request_id}}
+
+### Register another seller
+POST http://localhost:8000/api/auth/register.php
+Content-Type: application/json
+
+{
+  "username": "seller2",
+  "email": "seller2@example.com",
+  "password": "password123",
+  "user_type": "seller"
+}
+
+### Login as seller2
+POST http://localhost:8000/api/auth/login.php
+Content-Type: application/json
+
+{
+  "email": "seller2@example.com",
+  "password": "password123"
+}
+
+### Save seller2 token
+@seller2Token = {{login.response.body.data.token}}
+
+### Create seller2 profile
+POST http://localhost:8000/api/sellers/
+Content-Type: application/json
+Authorization: Bearer {{seller2Token}}
+
+{
+  "company_name": "Creative Solutions Ltd",
+  "contact_info": "456 Design Ave, Creative City\nPhone: 555-5678\nEmail: info@creativesolutions.com"
+}
+
+### Create bids from sellers
+
+### Bid 1 for Web Development Request
+POST http://localhost:8000/api/bids/
+Content-Type: application/json
+Authorization: Bearer {{sellerToken}}
+
+{
+  "request_id": 1,
+  "price": 2500,
+  "description": "I can build a fully responsive e-commerce website with custom design, product catalog, shopping cart, payment integration, and admin dashboard. I'll use WordPress with WooCommerce and optimize it for performance and SEO.",
+  "delivery_time": "5 weeks"
+}
+
+### Bid 2 for Web Development Request
+POST http://localhost:8000/api/bids/
+Content-Type: application/json
+Authorization: Bearer {{seller2Token}}
+
+{
+  "request_id": 1,
+  "price": 2800,
+  "description": "I specialize in e-commerce websites with a focus on user experience and conversion optimization. I'll build a custom solution with all requested features plus product filtering, wishlist, and customer accounts. I'll provide ongoing support for 2 months after launch.",
+  "delivery_time": "6 weeks"
+}
+
+### Bid for Mobile App Request
+POST http://localhost:8000/api/bids/
+Content-Type: application/json
+Authorization: Bearer {{sellerToken}}
+
+{
+  "request_id": 2,
+  "price": 6500,
+  "description": "I can develop a cross-platform fitness tracking app using React Native with all requested features. I'll include user onboarding, workout tracking, progress visualization, and social sharing. The app will work offline and sync when online.",
+  "delivery_time": "2.5 months"
+}
+
+### Bid for Logo Design Request
+POST http://localhost:8000/api/bids/
+Content-Type: application/json
+Authorization: Bearer {{seller2Token}}
+
+{
+  "request_id": 3,
+  "price": 450,
+  "description": "As an experienced brand designer, I'll create a modern, tech-focused logo that conveys innovation and reliability. I'll provide 3 initial concepts and up to 3 rounds of revisions on your preferred concept. All deliverables will be included as specified.",
+  "delivery_time": "10 days"
+}
+
+### Bid for Content Writing Request
+POST http://localhost:8000/api/bids/
+Content-Type: application/json
+Authorization: Bearer {{seller2Token}}
+
+{
+  "request_id": 4,
+  "price": 650,
+  "description": "I'm a technical writer with expertise in cloud computing and SaaS. I'll create 5 comprehensive, SEO-optimized articles with proper research, engaging headings, and actionable insights. I'll include royalty-free images and meta descriptions.",
+  "delivery_time": "3 weeks"
+}
+
+### Accept a bid (as buyer)
+POST http://localhost:8000/api/bids/accept.php
+Content-Type: application/json
+Authorization: Bearer {{buyerToken}}
+
+{
+  "bid_id": 1
+}
+
+### Get all bids for a specific request
+GET http://localhost:8000/api/bids/?request_id=1
+Authorization: Bearer {{buyerToken}}
+
+### Get all transactions
+GET http://localhost:8000/api/transactions/
+Authorization: Bearer {{buyerToken}}

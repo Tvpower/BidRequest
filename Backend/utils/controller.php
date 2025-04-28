@@ -3,11 +3,15 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/response.php';
+require_once __DIR__ . '/auth.php';
 
 class Controller {
   protected $db;
   protected $auth;
 
+  /**
+   * @throws Exception
+   */
   public function __construct() {
     // Set common headers
     header("Access-Control-Allow-Origin: *");

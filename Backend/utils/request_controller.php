@@ -20,6 +20,11 @@ class RequestsController extends Controller {
         $where .= " AND r.status = :status";
         $params[':status'] = $_GET['status'];
       }
+      //filter by type (service or product)
+      if (!empty($_GET['type'])) {
+        $where .= " AND r.type = :type";
+        $params[':type'] = $_GET['type'];
+      }
 
       //filter by user (for "my requests" functionality)
       if (!empty($_GET['user_id'])) {
@@ -53,7 +58,8 @@ class RequestsController extends Controller {
       //main query
       $stmt = $this->db->prepare("
                 SELECT
-                    r.request_id, r.title, r.description, r.creation_date, r.expiration_date, r.status,
+                    r.request_id, r.title, r.description, r.type, r.budget, r.desired_condition,
+                    r.creation_date, r.expiration_date, r.status,
                     u.username as requester_name,
                     c.name as category_name
                 FROM
@@ -115,18 +121,30 @@ class RequestsController extends Controller {
         ? $data->expiration_date
         : date('Y-m-d H:i:s', strtotime('+14 days'));
 
+      // Set type (default to service if not provided)
+      $type = !empty($data->type) ? $data->type : 'service';
+      
+      // Set budget if provided
+      $budget = !empty($data->budget) ? $data->budget : null;
+      
+      // Set desired condition if provided (for product requests)
+      $desired_condition = !empty($data->desired_condition) ? $data->desired_condition : null;
+
       // Create request
       $stmt = $this->db->prepare("
                 INSERT INTO requests
-                (user_id, title, description, category_id, creation_date, expiration_date, status)
+                (user_id, title, description, category_id, type, budget, desired_condition, creation_date, expiration_date, status)
                 VALUES
-                (:user_id, :title, :description, :category_id, NOW(), :expiration_date, 'active')
+                (:user_id, :title, :description, :category_id, :type, :budget, :desired_condition, NOW(), :expiration_date, 'active')
             ");
 
       $stmt->bindParam(':user_id', $this->auth['user_id']);
       $stmt->bindParam(':title', $data->title);
       $stmt->bindParam(':description', $data->description);
       $stmt->bindParam(':category_id', $data->category_id);
+      $stmt->bindParam(':type', $type);
+      $stmt->bindParam(':budget', $budget);
+      $stmt->bindParam(':desired_condition', $desired_condition);
       $stmt->bindParam(':expiration_date', $expiration_date);
 
       $stmt->execute();
@@ -136,16 +154,20 @@ class RequestsController extends Controller {
       // Add specifications if provided
       if (isset($data->specifications) && is_array($data->specifications)) {
         foreach ($data->specifications as $spec) {
+          // Check if is_required is provided
+          $is_required = isset($spec->is_required) ? $spec->is_required : true;
+          
           $spec_stmt = $this->db->prepare("
                         INSERT INTO request_details
-                        (request_id, specification_type, specification_value)
+                        (request_id, specification_type, specification_value, is_required)
                         VALUES
-                        (:request_id, :type, :value)
+                        (:request_id, :type, :value, :is_required)
                     ");
 
           $spec_stmt->bindParam(':request_id', $request_id);
           $spec_stmt->bindParam(':type', $spec->type);
           $spec_stmt->bindParam(':value', $spec->value);
+          $spec_stmt->bindParam(':is_required', $is_required, PDO::PARAM_BOOL);
 
           $spec_stmt->execute();
         }
@@ -172,6 +194,7 @@ class RequestsController extends Controller {
       $stmt = $this->db->prepare("
                 SELECT
                     r.request_id, r.user_id, r.title, r.description, r.category_id,
+                    r.type, r.budget, r.desired_condition,
                     r.creation_date, r.expiration_date, r.status,
                     u.username as requester_name,
                     c.name as category_name
@@ -197,7 +220,7 @@ class RequestsController extends Controller {
       // Fetch specifications
       $spec_stmt = $this->db->prepare("
                 SELECT
-                    detail_id, specification_type, specification_value
+                    detail_id, specification_type, specification_value, is_required
                 FROM
                     request_details
                 WHERE
@@ -308,6 +331,21 @@ class RequestsController extends Controller {
         $updateFields[] = "status = :status";
         $params[':status'] = $data->status;
       }
+      
+      if (!empty($data->type)) {
+        $updateFields[] = "type = :type";
+        $params[':type'] = $data->type;
+      }
+      
+      if (isset($data->budget)) {
+        $updateFields[] = "budget = :budget";
+        $params[':budget'] = $data->budget;
+      }
+      
+      if (isset($data->desired_condition)) {
+        $updateFields[] = "desired_condition = :desired_condition";
+        $params[':desired_condition'] = $data->desired_condition;
+      }
 
       // Update request if fields were provided
       if (!empty($updateFields)) {
@@ -331,16 +369,20 @@ class RequestsController extends Controller {
 
         // Add new specs
         foreach ($data->specifications as $spec) {
+          // Check if is_required is provided
+          $is_required = isset($spec->is_required) ? $spec->is_required : true;
+          
           $spec_stmt = $this->db->prepare("
                         INSERT INTO request_details
-                        (request_id, specification_type, specification_value)
+                        (request_id, specification_type, specification_value, is_required)
                         VALUES
-                        (:request_id, :type, :value)
+                        (:request_id, :type, :value, :is_required)
                     ");
 
           $spec_stmt->bindParam(':request_id', $request_id);
           $spec_stmt->bindParam(':type', $spec->type);
           $spec_stmt->bindParam(':value', $spec->value);
+          $spec_stmt->bindParam(':is_required', $is_required, PDO::PARAM_BOOL);
 
           $spec_stmt->execute();
         }

@@ -11,6 +11,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 // Include database connection
 require_once '../../config/database.php';
 
+require_once __DIR__ . '/../../utils/auth.php';
+
 // Initialize response array
 $response = [
   'success' => false,
@@ -19,29 +21,6 @@ $response = [
 ];
 
 // Simple authorization check (This should be improved in production)
-function authorize() {
-  $headers = getallheaders();
-  if (!isset($headers['Authorization'])) {
-    return false;
-  }
-
-  // In production, use a proper JWT validation
-  $token = $headers['Authorization'];
-  $token = str_replace('Bearer ', '', $token);
-
-  try {
-    $payload = json_decode(base64_decode($token), true);
-
-    // Check if token is expired
-    if (isset($payload['exp']) && $payload['exp'] < time()) {
-      return false;
-    }
-
-    return $payload;
-  } catch (Exception $e) {
-    return false;
-  }
-}
 
 // Check if it's a POST request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -52,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Check authorization
-$auth = authorize();
+$auth = Auth::authorize();
 if (!$auth) {
   $response['message'] = 'Unauthorized access';
   http_response_code(401);

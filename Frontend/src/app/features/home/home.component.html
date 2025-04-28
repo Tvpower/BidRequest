@@ -48,40 +48,95 @@
     </div>
   </section>
 
-  <!-- Latest Requests Section -->
+  <!-- Latest Service Requests Section -->
   <section class="latest-requests-section">
     <div class="container">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title">Latest Requests</h2>
-        <a routerLink="/requests" class="btn btn-outline-primary">View All</a>
+        <h2 class="section-title">Latest Service Requests</h2>
+        <a [routerLink]="['/requests']" [queryParams]="{type: 'service'}" class="btn btn-outline-primary">View All</a>
       </div>
 
-      <div *ngIf="isLoading" class="text-center py-5">
+      <div *ngIf="servicesLoading" class="text-center py-5">
         <app-loading-spinner></app-loading-spinner>
       </div>
 
-      <div *ngIf="errorMessage" class="alert alert-danger">
-        {{ errorMessage }}
+      <div *ngIf="servicesErrorMessage" class="alert alert-danger">
+        {{ servicesErrorMessage }}
       </div>
 
-      <div *ngIf="!isLoading && !errorMessage" class="row">
-        <div *ngFor="let request of latestRequests" class="col-md-4 mb-4">
+      <div *ngIf="!servicesLoading && !servicesErrorMessage" class="row">
+        <div *ngFor="let request of latestServiceRequests" class="col-md-4 mb-4">
           <div class="card h-100">
             <div class="card-body">
-              <span class="badge bg-primary mb-2">{{ request.category_name }}</span>
-              <h5 class="card-title">{{ request.title }}</h5>
-              <p class="card-text">{{ request.description | slice:0:100 }}{{ request.description.length > 100 ? '...' : '' }}</p>
+              <span class="badge bg-primary mb-2">{{ request.category_name || 'Uncategorized' }}</span>
+              <span class="badge bg-info ms-2">Service</span>
+              <h5 class="card-title">{{ request.title || 'Untitled Request' }}</h5>
+              <p class="card-text">{{ request.description ? (request.description | slice:0:100) + (request.description.length > 100 ? '...' : '') : 'No description available' }}</p>
+              <p *ngIf="request.budget" class="card-text"><strong>Budget:</strong> ${{ request.budget }}</p>
             </div>
             <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
-              <small class="text-muted">Posted by {{ request.requester_name }}</small>
+              <small class="text-muted">Posted by {{ request.requester_name || 'Anonymous' }}</small>
               <a [routerLink]="['/requests', request.request_id]" class="btn btn-sm btn-outline-primary">View Details</a>
             </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="!isLoading && !errorMessage && latestRequests.length === 0" class="text-center py-4">
-        <p>No requests available at the moment.</p>
+      <div *ngIf="!servicesLoading && !servicesErrorMessage && latestServiceRequests.length === 0" class="text-center py-4">
+        <p>No service requests available at the moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Product Requests Section -->
+  <section class="latest-products-section bg-light py-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title">Latest Product Requests</h2>
+        <a [routerLink]="['/requests']" [queryParams]="{type: 'product'}" class="btn btn-outline-primary">View All</a>
+      </div>
+
+      <div *ngIf="productsLoading" class="text-center py-5">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+
+      <div *ngIf="productsErrorMessage" class="alert alert-danger">
+        {{ productsErrorMessage }}
+      </div>
+
+      <div *ngIf="!productsLoading && !productsErrorMessage" class="row">
+        <div *ngFor="let request of latestProductRequests" class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <span class="badge bg-primary mb-2">{{ request.category_name || 'Uncategorized' }}</span>
+              <span class="badge bg-success ms-2">Product</span>
+              <h5 class="card-title">{{ request.title || 'Untitled Request' }}</h5>
+              <p class="card-text">{{ request.description ? (request.description | slice:0:100) + (request.description.length > 100 ? '...' : '') : 'No description available' }}</p>
+              <p *ngIf="request.budget" class="card-text"><strong>Budget:</strong> ${{ request.budget }}</p>
+              <p *ngIf="request.desired_condition && request.desired_condition !== 'any'" class="card-text">
+                <strong>Desired Condition:</strong> {{ request.desired_condition | titlecase }}
+              </p>
+              <div *ngIf="request.specifications && request.specifications.length > 0" class="mt-2">
+                <p class="mb-1"><strong>Specifications:</strong></p>
+                <ul class="specs-list">
+                  <li *ngFor="let spec of request.specifications | slice:0:2">
+                    <strong>{{ spec.specification_type }}:</strong> {{ spec.specification_value }}
+                    <span *ngIf="spec.is_required" class="text-danger">*</span>
+                  </li>
+                  <li *ngIf="request.specifications.length > 2" class="text-muted">+ {{ request.specifications.length - 2 }} more</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+              <small class="text-muted">Posted by {{ request.requester_name || 'Anonymous' }}</small>
+              <a [routerLink]="['/requests', request.request_id]" class="btn btn-sm btn-outline-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!productsLoading && !productsErrorMessage && latestProductRequests.length === 0" class="text-center py-4">
+        <p>No product requests available at the moment.</p>
       </div>
     </div>
   </section>
@@ -96,7 +151,7 @@
             <div class="card text-center h-100">
               <div class="card-body">
                 <h5 class="card-title">{{ category.name }}</h5>
-                <p class="card-text" *ngIf="category.description">{{ category.description }}</p>
+                <p class="card-text" *ngIf="category?.description">{{ category.description }}</p>
               </div>
             </div>
           </a>

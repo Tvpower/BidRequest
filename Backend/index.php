@@ -11,7 +11,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', getenv('APP_DEBUG') === 'true' ? 1 : 0);
 
 //define base path constant
-define('BASE_PATH', __DIR__);
+const BASE_PATH = __DIR__;
 
 //set headers for API responses
 header("Access-Control-Allow-Origin: http://localhost:4200");
@@ -33,12 +33,12 @@ require_once BASE_PATH . '/utils/response.php';
 $requestUri = $_SERVER['REQUEST_URI'];
 $basePath = '/'; // Update this if your app is in a subdirectory
 
-//remove base path and query string
+//remove a base path and query string
 $path = parse_url($requestUri, PHP_URL_PATH);
 $path = substr($path, strlen($basePath));
 $path = trim($path, '/');
 
-//if no path, redirect to welcome page or serve documentation
+//if no path, redirect to the welcome page or serve documentation
 if (empty($path)) {
   include BASE_PATH . '/welcome.php';
   exit;

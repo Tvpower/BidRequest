@@ -1,4 +1,5 @@
 <?php
+require_once '../../utils/include_cors.php';
 require_once '../../utils/request_controller.php';
 
 $controller = new RequestsController();

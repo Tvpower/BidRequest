@@ -3,13 +3,25 @@ export interface Bid {
   request_id: number;
   seller_id: number;
   price: number;
-  proposal: string;
-  delivery_time: string;
+  description: string;
+  product_condition?: 'new' | 'like-new' | 'good' | 'fair' | 'poor';
+  product_brand?: string;
+  product_model?: string;
+  delivery_time?: string;
   submission_date: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'active' | 'accepted' | 'rejected' | 'withdrawn' | 'sold' | 'shipped' | 'delivered';
   seller_name?: string;
   company_name?: string;
   seller_rating?: number;
+  images?: BidImage[];
+}
+
+export interface BidImage {
+  image_id: number;
+  bid_id: number;
+  image_url: string;
+  is_primary: boolean;
+  upload_date: string;
 }
 
 export interface BidsResponse {

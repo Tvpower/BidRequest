@@ -11,19 +11,19 @@ RewriteBase /
 
 # Block access to .env file
 <FilesMatch "^\.env">
- Order allow, deny
+ Order allow,deny
  Deny from all
 </FilesMatch>
 
-#Block access to .htaccess and other sensitive files
+#Block access to .htacces and other sensitive files
 <FilesMatch "^(\.|composer\.|package)">
-  Order allow, deny
-  Deny from all
+ Order allow,deny
+ Deny from all
 </FilesMatch>
 
 # Protect config dir
 <FilesMatch "^config">
- Order allow, deny
+ Order allow,deny
  Deny from all
 </FilesMatch>
 
@@ -45,3 +45,4 @@ RewriteRule ^api/([^/]+)/?$ api/$1/index.php [L,QSA]
 php_flag display_errors off
 php_value post_max_size 10M
 php_value upload_max_filesize 8M
+

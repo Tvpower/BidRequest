@@ -31,7 +31,7 @@
         <ng-container *ngIf="currentUser">
           <!-- Buyer-specific menu items -->
           <li class="nav-item" *ngIf="currentUser.user_type === 'buyer'">
-            <a class="nav-link" routerLink="/requests/create" routerLinkActive="active">Create Request</a>
+            <a class="nav-link" routerLink="/requests/post" routerLinkActive="active">Create Request</a>
           </li>
           
           <!-- Seller-specific menu items -->

@@ -1,0 +1,139 @@
+<div class="request-details-container">
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-message">
+    <div class="alert alert-danger">
+      <h4>Error</h4>
+      <p>Unable to load request details. The request may not exist or you may not have permission to view it.</p>
+      <button class="btn btn-outline-primary" (click)="goBack()">Go Back</button>
+    </div>
+  </div>
+
+  <div *ngIf="request && !loading" class="request-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="request-title">{{ request.title }}</h2>
+      <span class="badge" [ngClass]="{
+        'bg-success': request.status === 'active',
+        'bg-warning': request.status === 'in_progress',
+        'bg-secondary': request.status === 'completed' || request.status === 'closed',
+        'bg-danger': request.status === 'expired'
+      }">{{ request.status | titlecase }}</span>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5>Request Details</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <h6>Description</h6>
+              <p>{{ request.description }}</p>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Category</h6>
+                <p>{{ request.category_name || 'Not specified' }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Type</h6>
+                <p>{{ request.type | titlecase }}</p>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Budget</h6>
+                <p>{{ request.budget ? ('$' + request.budget) : 'Not specified' }}</p>
+              </div>
+              <div class="col-md-6" *ngIf="request.type === 'product'">
+                <h6>Desired Condition</h6>
+                <p>{{ request.desired_condition ? (request.desired_condition | titlecase) : 'Any' }}</p>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <h6>Created</h6>
+                <p>{{ request.creation_date | date:'medium' }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Expires</h6>
+                <p>{{ request.expiration_date | date:'medium' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4" *ngIf="request.specifications && request.specifications.length > 0">
+          <div class="card-header">
+            <h5>Specifications</h5>
+          </div>
+          <div class="card-body">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Value</th>
+                  <th>Required</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let spec of request.specifications">
+                  <td>{{ spec.specification_type }}</td>
+                  <td>{{ spec.specification_value }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="spec.is_required ? 'bg-primary' : 'bg-secondary'">
+                      {{ spec.is_required ? 'Yes' : 'No' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5>Requester</h5>
+          </div>
+          <div class="card-body">
+            <p><strong>{{ request.requester_name || 'Anonymous' }}</strong></p>
+            <p><small>User ID: {{ request.user_id }}</small></p>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5>Bid Information</h5>
+          </div>
+          <div class="card-body">
+            <p><strong>Bids Received:</strong> {{ request.bids_count || 0 }}</p>
+            <button class="btn btn-primary w-100" (click)="submitBid()" [disabled]="request.status !== 'active'">
+              Submit a Bid
+            </button>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5>Actions</h5>
+          </div>
+          <div class="card-body">
+            <button class="btn btn-outline-secondary w-100 mb-2" (click)="goBack()">
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

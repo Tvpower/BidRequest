@@ -14,6 +14,10 @@ const routes: Routes = [
       { path: 'register', component: RegisterComponent }
     ]
   },
+  {
+    path: 'requests',
+    loadChildren: () => import('./features/requests/requests.module').then(m => m.RequestsModule)
+  },
   // Lazy-loaded feature modules will be added here
   { path: '**', redirectTo: '' }
 ];

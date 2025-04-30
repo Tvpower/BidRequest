@@ -1,0 +1,54 @@
+.post-request-container {
+  .card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    border: none;
+    
+    .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      padding: 1rem 1.25rem;
+    }
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .specification-item {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-body {
+      padding: 1rem;
+    }
+  }
+  
+  // Form validation styling
+  .form-control, .form-select {
+    &.ng-invalid.ng-touched {
+      border-color: #dc3545;
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .specification-item .row {
+      flex-direction: column;
+      
+      .col-md-1 {
+        margin-top: 0.5rem;
+        justify-content: flex-start;
+      }
+    }
+  }
+}

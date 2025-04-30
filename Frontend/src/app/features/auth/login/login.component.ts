@@ -45,21 +45,34 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
 
     const { email, password } = this.loginForm.value;
+    console.log('Attempting login with email:', email);
 
     this.authService.login(email, password).subscribe({
-      next: () => {
-        this.router.navigate([this.returnUrl]);
+      next: (response) => {
+        console.log('Login successful, response:', response);
+        console.log('Current auth state:', this.authService.isLoggedIn);
+        console.log('Return URL:', this.returnUrl);
+        
+        // Small delay to ensure auth state is updated before navigation
+        setTimeout(() => {
+          this.router.navigate([this.returnUrl]);
+        }, 100);
       },
       error: (error) => {
         this.isSubmitting = false;
+        console.error('Login error details:', error);
+        
         if (error.status === 401) {
           this.errorMessage = 'Invalid email or password';
         } else if (error.status === 404) {
           this.errorMessage = 'User not found';
+        } else if (error.status === 0) {
+          this.errorMessage = 'Network error. Please check your connection.';
+        } else if (error.status === 408) {
+          this.errorMessage = 'Request timeout. Please try again.';
         } else {
-          this.errorMessage = 'Login failed. Please try again later.';
+          this.errorMessage = `Login failed (${error.status}). Please try again later.`;
         }
-        console.error('Login error:', error);
       }
     });
   }

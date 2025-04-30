@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, map } from 'rxjs';
 import { User, AuthResponse } from '../models/user.model';
 import { environment } from '../../../environments/environment';
 
@@ -32,10 +32,17 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login.php`, { email, password })
+    return this.http.post<any>(`${environment.apiUrl}/auth/login.php`, { email, password })
       .pipe(
-        tap(response => {
-          this.storeAuthData(response);
+        map(response => {
+          // Extract the actual AuthResponse from the nested structure
+          if (response && response.success && response.data) {
+            return response.data as AuthResponse;
+          }
+          throw new Error('Invalid response structure');
+        }),
+        tap(authResponse => {
+          this.storeAuthData(authResponse);
         })
       );
   }
@@ -58,9 +65,18 @@ export class AuthService {
   }
 
   private storeAuthData(authResponse: AuthResponse): void {
+    console.log('Auth response received:', authResponse);
+    if (!authResponse || !authResponse.token || !authResponse.user) {
+      console.error('Invalid auth response structure:', authResponse);
+      return;
+    }
+    
     localStorage.setItem(this.tokenKey, authResponse.token);
     localStorage.setItem(this.userKey, JSON.stringify(authResponse.user));
     this.currentUserSubject.next(authResponse.user);
+    console.log('Auth data stored, current user:', this.currentUserSubject.value);
+    console.log('Token in localStorage:', localStorage.getItem(this.tokenKey));
+    console.log('User in localStorage:', localStorage.getItem(this.userKey));
   }
 
   get currentUser(): User | null {

@@ -42,7 +42,7 @@ RewriteRule ^api/([^/]+)/?$ api/$1/index.php [L,QSA]
 </IfModule>
 
 # PHP settings
-php_flag display_errors off
+#php_flag display_errors off
 php_value post_max_size 10M
 php_value upload_max_filesize 8M
 

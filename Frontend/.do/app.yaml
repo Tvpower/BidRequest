@@ -1,0 +1,12 @@
+name: bidrequest-frontend
+services:
+- name: web
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: your-github-username/bidrequest-frontend
+  build_command: npm install && npm run build
+  run_command: npm run serve:prod
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: basic-xxs 

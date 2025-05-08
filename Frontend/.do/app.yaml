@@ -9,4 +9,7 @@ services:
   run_command: npm run serve:prod
   http_port: 8080
   instance_count: 1
-  instance_size_slug: basic-xxs 
+  instance_size_slug: basic-xxs
+  envs:
+    - key: NODE_ENV
+      value: production 

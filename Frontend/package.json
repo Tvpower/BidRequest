@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build --configuration production",
     "build:prod": "ng build --configuration production",
-    "serve:prod": "serve -s dist/bidrequest-frontend -l 8080",
+    "serve:prod": "ng serve --configuration production --port 8080 --host 0.0.0.0",
+    "serve:static": "serve -s dist/bidrequest-frontend -l 8080",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
